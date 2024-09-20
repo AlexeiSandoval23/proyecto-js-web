@@ -1,6 +1,6 @@
 # CONFITERIA DE CINE
 
-Proyecto creado para coderhouse curso de JS, este es un proyecto wea que simula una tienda en linea donde los usuarios pueden comprar productos estilo palomitas, chocolates, bebidas y combos. Los usuarios pueden añadir productos al carrtiyo  y realizar la compra. El proyecto cuenta con un sistema de login y registro para los usuarios. Ademas, cuenta con un sistema de inicio de sesion que se valida con un archivo JSON.
+Proyecto creado para coderhouse curso de JS, este es un proyecto web que simula una tienda en linea donde los usuarios pueden comprar productos estilo palomitas, chocolates, bebidas y combos. Los usuarios pueden añadir productos al carrtiyo  y realizar la compra. El proyecto cuenta con un sistema de login y registro para los usuarios. Ademas, cuenta con un sistema de inicio de sesion que se valida con un archivo JSON.
 
 # USO
 
