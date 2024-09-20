@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nerko+One&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <img src="../img/logo.png" alt="Logo de Confitería del Cine">
+            <ul class="links">
+                <li><a href="#">Iniciar sesion</a></li>
+                <li><a href="../index.html">Confitería</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div id="login">
+        <h2>Iniciar Sesión</h2>
+        <form id="login-form">
+            <div>
+                <label for="username">Nombre de usuario:</label>
+                <input type="text" id="username" required>
+            </div>
+            <div>
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Iniciar Sesión</button>
+        </form>
+    </div>
+
+    <script src="../js/login.js"></script>
+</body>
+</html>

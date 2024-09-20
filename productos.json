@@ -1,0 +1,33 @@
+[
+    {
+      "nombre": "Palomitas",
+      "precio": 5000,
+      "imagen": "img/popcorn.png"
+    },
+    {
+      "nombre": "Chocolates",
+      "precio": 2500,
+      "imagen": "img/chocolate.png"
+    },
+    {
+      "nombre": "Bebida",
+      "precio": 2000,
+      "imagen": "img/bebida.png"
+    },
+    {
+      "nombre": "Combo 1",
+      "precio": 25000,
+      "imagen": "img/combo-uno.png"
+    },
+    {
+      "nombre": "Combo 2",
+      "precio": 30000,
+      "imagen": "img/combo-dos.png"
+    },
+    {
+      "nombre": "Combo 3",
+      "precio": 20000,
+      "imagen": "img/combo-tres.png"
+    }
+  ]
+  

@@ -2,22 +2,68 @@ document.addEventListener('DOMContentLoaded', () => {
     let cart = [];
 
 
-    document.querySelectorAll('.add-to-cart').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const productElement = e.target.parentElement;
-            const productName = productElement.querySelector('h2').textContent;
-            const productPriceText = productElement.querySelector('p').textContent.replace('Precio: $', '');
-            const productPrice = parseFloat(productPriceText);
-
-            if (!isNaN(productPrice)) {
-                addToCart(productName, productPrice);
-            } else {
-                console.error(`Precio no válido para el producto: ${productName}`);
+    async function loadProducts() {
+        try {
+            const response = await fetch('productos.json');
+            if (!response.ok) {
+                throw new Error('Error en la respuesta de la red');
             }
+            const productos = await response.json();
+            renderProducts(productos);
+        } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al cargar los productos. Inténtalo más tarde.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'custom-confirm-button'
+                }
+            });
+            console.error('Error al cargar los productos:', error);
+        }
+    }
+
+
+    function renderProducts(productos) {
+        const productsContainer = document.getElementById('products');
+        productsContainer.innerHTML = '';
+
+        productos.forEach(product => {
+            const productElement = document.createElement('div');
+            productElement.classList.add('product');
+
+            productElement.innerHTML = `
+                <img src="${product.imagen}" alt="${product.nombre}">
+                <h2>${product.nombre}</h2>
+                <p>Precio: $${product.precio}</p>
+                <button class="add-to-cart">Agregar al carrito</button>
+            `;
+
+
+            productElement.querySelector('.add-to-cart').addEventListener('click', () => {
+                addToCart(product.nombre, product.precio);
+            });
+
+            productsContainer.appendChild(productElement);
         });
-    });
+    }
+
 
     function addToCart(productName, productPrice) {
+        if (typeof productPrice !== 'number' || isNaN(productPrice)) {
+            Swal.fire({
+                title: 'Error',
+                text: `Precio no válido para el producto: ${productName}`,
+                icon: 'error',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'custom-confirm-button'
+                }
+            });
+            return;
+        }
+
         const existingProduct = cart.find(item => item.name === productName);
         if (existingProduct) {
             existingProduct.quantity++;
@@ -25,9 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             cart.push({ name: productName, price: productPrice, quantity: 1, totalPrice: productPrice });
         }
-        console.log(`Producto agregado al carrito: ${productName} - Precio: ${productPrice}`);
         updateCart();
         saveCartToLocalStorage();
+
     }
 
     function updateCart() {
@@ -35,11 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cartItemsContainer.innerHTML = '';
 
         cart.forEach(item => {
-            const itemPrice = item.price || 0;
-            const itemTotalPrice = item.totalPrice || 0;
-            
             const li = document.createElement('li');
-            li.textContent = `${item.name} - ${item.quantity} x $${itemPrice.toFixed(2)} = $${itemTotalPrice.toFixed(2)}`;
+            li.textContent = `${item.name} - ${item.quantity} x $${item.price.toFixed(2)} = $${item.totalPrice.toFixed(2)}`;
             const removeButton = document.createElement('button');
             removeButton.textContent = 'Eliminar';
             removeButton.classList.add('remove-button');
@@ -52,34 +95,99 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateTotal() {
-        const total = cart.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
+        const total = cart.reduce((sum, item) => sum + item.totalPrice, 0);
         document.getElementById('total').textContent = `Total: $${total.toFixed(2)}`;
     }
 
     function removeFromCart(productName) {
         cart = cart.filter(item => item.name !== productName);
-        console.log(`Producto eliminado del carrito: ${productName}`);
         updateCart();
         saveCartToLocalStorage();
+
+        Swal.fire({
+            title: 'Producto eliminado',
+            text: `${productName} ha sido eliminado del carrito`,
+            icon: 'info',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'custom-confirm-button'
+            }
+        });
     }
 
     function saveCartToLocalStorage() {
-        localStorage.setItem('cart', JSON.stringify(cart));
-        console.log('Carrito guardado en localStorage:', cart);
-    }
-
-    function loadCartFromLocalStorage() {
-        const savedCart = JSON.parse(localStorage.getItem('cart'));
-        if (savedCart) {
-            cart = savedCart.map(item => ({
-                ...item,
-                price: item.price || 0,
-                totalPrice: item.totalPrice || 0
-            }));
-            updateCart();
-            console.log('Carrito cargado desde localStorage:', savedCart);
+        try {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al guardar el carrito. Inténtalo más tarde.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'custom-confirm-button'
+                }
+            });
+            console.error('Error al guardar el carrito en localStorage:', error);
         }
     }
 
+    function loadCartFromLocalStorage() {
+        try {
+            const savedCart = JSON.parse(localStorage.getItem('cart'));
+            if (savedCart) {
+                cart = savedCart;
+                updateCart();
+            }
+        } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al cargar tu carrito. Inténtalo más tarde.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'custom-confirm-button'
+                }
+            });
+            console.error('Error al cargar el carrito desde localStorage:', error);
+        }
+    }
+
+    function finalizarCompra() {
+        if (cart.length === 0) {
+            Swal.fire({
+                title: 'Carrito vacío',
+                text: 'No tienes productos en el carrito para finalizar la compra.',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'custom-confirm-button'  
+                }
+            });
+            return;
+        }
+
+        // Borrar carrito y finalizar compra.
+        cart = [];
+        updateCart();
+        saveCartToLocalStorage();
+
+        Swal.fire({
+            title: 'Compra realizada',
+            text: 'Gracias por tu compra. Tu pedido está en proceso.',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'custom-confirm-button'
+            }
+        });
+    }
+
+
+    const checkoutButton = document.getElementById('checkout');
+    checkoutButton.addEventListener('click', finalizarCompra);
+
+
+    loadProducts();
     loadCartFromLocalStorage();
 });
